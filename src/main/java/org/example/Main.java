@@ -10,7 +10,7 @@ public class Main {
         String sentenciaSQL = "Select * FROM actores";
         String usuario="postgres";
         String contraseña="postgres";
-        try(Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/mi base 01",usuario,contraseña);
+        try(Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/mi base01",usuario,contraseña);
             PreparedStatement sentencia= con.prepareStatement(sentenciaSQL)){
             ResultSet resultados = sentencia.executeQuery();
 
@@ -25,4 +25,5 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
+
 }
