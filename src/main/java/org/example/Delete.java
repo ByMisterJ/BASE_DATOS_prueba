@@ -1,19 +1,20 @@
 package org.example;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Insert {
+public class Delete {
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
         Connection c = null;
         Statement stmt = null;
-        String usuario="postgres";
-        String contraseña="postgres";
+        String user="postgres";
+        String password="postgres";
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/mi base01", usuario, contraseña);
+                    .getConnection("jdbc:postgresql://localhost:5432/mi base01", user, password);
             c.setAutoCommit(false);
             System.out.println("Opened database successfully");
         } catch (Exception e) {
@@ -22,8 +23,8 @@ public class Insert {
         }
         try {
             stmt = c.createStatement();
-            String sql = "INSERT INTO actores (id,nombre,edad) "
-                    + "VALUES (2, 'Paco', 32);";
+            String sql = "DELETE FROM actores"
+                    + "WHERE nombre=Paco";
             stmt.executeUpdate(sql);
 
             stmt.close();

@@ -25,7 +25,7 @@ public class PruebaPilotoExistente {
             stmt = c.createStatement();
             String sql = "INSERT INTO drivers (driverid, code, forename, surname, dob, nationality, constructorid, url) "
                     + "VALUES (39, 'ALO', 'Hernando', 'Alfonso', '1982-08-30', 'Spanish', 39, 'http://en.wikipedia.org/wiki/Hernando_Alfonso')," +
-                    "(40, 'ANA', 'Ana', 'Alfonso', '1982-08-30', 'Spanish', 40, 'http://en.wikipedia.org/wiki/Hernando_Alfonso');";
+                    "(40, 'ANA', 'Ana', 'Vi', '1982-08-30', 'Spanish', 40, 'http://en.wikipedia.org/wiki/Ana_Vi');";
             stmt.executeUpdate(sql);
 
             stmt.close();
