@@ -1,7 +1,7 @@
 package org.example.SQLite;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class OperacionesCRUDPilotos {
 
@@ -95,6 +95,51 @@ public class OperacionesCRUDPilotos {
             } else {
                 System.out.println("No se encontró ningún registro para actualizar");
             }
+        }
+    }
+
+    public void BorrarPiloto(Connection con, Piloto piloto) throws SQLException {
+        String query = "DELETE FROM drivers WHERE driverid=?";
+
+        try (PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, piloto.getDriverid());
+
+            int rowsDeleted = pstmt.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Registro eliminado exitosamente");
+            } else {
+                System.out.println("No se encontró ningún registro para eliminar");
+            }
+        }
+    }
+
+    public void MostrarClasificacionPiloto(Connection con) throws SQLException {
+        List<Resultado> clasificacion = new ArrayList<>();
+
+        // Obtener la clasificación de la base de datos
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT driverid, SUM(puntos) AS total_puntos FROM resultados GROUP BY driverid ORDER BY total_puntos DESC;");
+
+        while (rs.next()) {
+            int driverId = rs.getInt("driverid");
+            int puntos = rs.getInt("total_puntos");
+
+            Resultado resultado = new Resultado(driverId, puntos);
+            clasificacion.add(resultado);
+        }
+
+        // Cerrar recursos
+        rs.close();
+        stmt.close();
+
+        // Ordenar la clasificación por puntos
+        Collections.sort(clasificacion, Comparator.comparingInt(Resultado::getPuntos).reversed());
+
+        // Mostrar la clasificación
+        System.out.println("Clasificación final del mundial de pilotos:");
+        for (Resultado resultado : clasificacion) {
+            System.out.println("Driver ID: " + resultado.getDriverid() + ", Puntos: " + resultado.getPuntos());
         }
     }
 }
