@@ -1,29 +1,74 @@
 package org.example.SQLite;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class OperacionesCRUDPilotos {
-    public void crearPiloto(Connection con) throws SQLException {
-        Connection c = null;
+
+    public static void main(String[] args) {
+
+    }
+    public void crearPiloto(Connection con, Piloto piloto) throws SQLException {
         Statement stmt;
 
         try {
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
-            String sql = "INSERT INTO actores (id,nombre,edad) "
-                    + "VALUES (2, 'Paco', 32);";
+            con.setAutoCommit(false);
+            stmt = con.createStatement();
+            String sql = "INSERT INTO drivers (id,nombre,edad) "
+                    + "VALUES (piloto);";
             stmt.executeUpdate(sql);
 
             stmt.close();
-            c.commit();
-            c.setAutoCommit(true);
-            c.close();
+            con.commit();
+            con.setAutoCommit(true);
+            con.close();
         } catch (SQLException e) {
-            c.rollback();
+            con.rollback();
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
+    }
+
+    public Piloto LeerPiloto(Connection con, int id) throws SQLException {
+        Piloto piloto= null;
+
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM drivers WHERE driverid = id;");
+            piloto = (Piloto) rs;
+            stmt.close();
+            con.close();
+        }catch(Exception e){
+            System.out.println("no se ha encontrado a nadie con ese id");
+            }
+        return piloto;
+    }
+
+    public ArrayList<Piloto> LeerPilotos(Connection con) throws SQLException {
+        ArrayList<Piloto> ListaPilotos = new ArrayList<>();
+
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM drivers ORDER BY driverid;");
+
+        // Iterar sobre los resultados y agregar los pilotos a la lista
+        while (rs.next()) {
+            int driverId = rs.getInt("driverid");
+            String code = rs.getString("code");
+            String forename = rs.getString("forename");
+            String surname = rs.getString("surname");
+            String dob = rs.getString("dob");
+            String nationality = rs.getString("nationality");
+            String url = rs.getString("url");
+
+            Piloto piloto = new Piloto(driverId, code, forename, surname, dob, nationality, url);
+            ListaPilotos.add(piloto);
+        }
+
+        // Cerrar recursos
+        rs.close();
+        stmt.close();
+        con.close();
+
+        return ListaPilotos;
     }
 }
