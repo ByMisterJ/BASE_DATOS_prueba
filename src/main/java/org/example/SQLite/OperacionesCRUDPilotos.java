@@ -119,27 +119,29 @@ public class OperacionesCRUDPilotos {
 
         // Obtener la clasificación de la base de datos
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT driverid, SUM(puntos) AS total_puntos FROM resultados GROUP BY driverid ORDER BY total_puntos DESC;");
+        ResultSet rs = stmt.executeQuery(
+                "SELECT SUM(r.points) AS total_points, CONCAT(d.forename, ' ', d.surname) AS nombre_completo , co.name\n" +
+                "FROM drivers AS d\n" +
+                "JOIN constructors AS co ON co.constructorid = d.constructorid \n" +
+                "JOIN results AS r ON d.driverid = r.driverid\n" +
+                "GROUP BY nombre_completo , co.name\n" +
+                "ORDER BY total_points DESC;");
+
+        // Mostrar los resultados por pantalla
+        System.out.println("Clasificación de Pilotos:");
+        System.out.printf("%-30s %-20s %-20s%n", "Nombre Completo", "Equipo", "Puntos");
+        System.out.println("----------------------------------------------------------");
 
         while (rs.next()) {
-            int driverId = rs.getInt("driverid");
-            int puntos = rs.getInt("total_puntos");
+            String nombreCompleto = rs.getString("nombre_completo");
+            String nombreEquipo = rs.getString("name");
+            int totalPuntos = rs.getInt("total_points");
 
-            Resultado resultado = new Resultado(driverId, puntos);
-            clasificacion.add(resultado);
+            System.out.printf("%-30s %-20s %-20d%n", nombreCompleto, nombreEquipo, totalPuntos);
         }
 
         // Cerrar recursos
         rs.close();
         stmt.close();
-
-        // Ordenar la clasificación por puntos
-        Collections.sort(clasificacion, Comparator.comparingInt(Resultado::getPuntos).reversed());
-
-        // Mostrar la clasificación
-        System.out.println("Clasificación final del mundial de pilotos:");
-        for (Resultado resultado : clasificacion) {
-            System.out.println("Driver ID: " + resultado.getDriverid() + ", Puntos: " + resultado.getPuntos());
-        }
     }
 }
